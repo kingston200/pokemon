@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pokemon Details</title>
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+<body>
+    <!-- Pokemon Search Form -->
+    <section id="pokemon-search" class="container mt-5">
+        <div class="row justify-content-center">
+            <div class="col-md-6">
+                <h2>Search for a Pokemon</h2>
+                <form id="pokemonSearchForm">
+                    <div class="form-group">
+                        <label for="pokemonName">Pokemon Name:</label>
+                        <input type="text" class="form-control" id="pokemonName" placeholder="Enter Pokemon Name" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary w-100">Search</button>
+                </form>
+            </div>
+        </div>
+    </section>
+ 
+    <!-- Pokemon Details Card -->
+    <section id="pokemon-details" class="container mt-5">
+        <div class="row justify-content-center">
+            <div class="col-md-6">
+                <div id="message" class="alert alert-danger d-none" role="alert"></div>
+                <div id="card" class="card invisible">
+                    <div class="card-body">
+                        <h3 class="card-title"></h3>
+                        <img class="card-img-top" src="" alt="Pokemon Front Image">
+                        <img class="card-img-top" src="" alt="Pokemon Back Image">
+                        <div class="card-text"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+ 
+    <!-- Bootstrap & jQuery JS -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            $('#pokemonSearchForm').submit(function(e) {
+                e.preventDefault();
+                var pokemonName = $('#pokemonName').val();
+                $.getJSON('https://pokeapi.co/api/v2/pokemon/' + pokemonName.toLowerCase(), function(data) {
+                    $('#message').addClass('d-none');
+                    $('#card').removeClass('invisible');
+                    $('#card h3').text(data.name);
+                    $('#card img:first-child').attr('src', data.sprites.front_default);
+                    $('#card img:last-child').attr('src', data.sprites.back_default);
+                    $('#card div').empty();
+                    data.types.forEach(function(type) {
+                        $('#card div').append('<span class="badge badge-primary">' + type.type.name + '</span> ');
+                    });
+                }).fail(function() {
+                    $('#message').text('Pokemon not found.').removeClass('d-none');
+                    $('#card').addClass('invisible');
+                });
+            });
+        });
+    </script>
+</body>
+</html>
